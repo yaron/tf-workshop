@@ -4,12 +4,12 @@ provider "azurerm" {
 }
 
 # Create a resource group if it doesn’t exist
-resource "azurerm_resource_group" "myterraformgroup" {
-    name     = "myResourceGroup"
+resource "azurerm_resource_group" "terraform_workshop" {
+    name     = "terraformWorkshop"
     location = "westeurope"
 
     tags = {
-        environment = "Terraform Demo"
+        environment = "Terraform workshop"
     }
 }
 
@@ -18,7 +18,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
     name                = "myVnet"
     address_space       = ["10.0.0.0/16"]
     location            = "westeurope"
-    resource_group_name = azurerm_resource_group.myterraformgroup.name
+    resource_group_name = azurerm_resource_group.terraform_workshop.name
 
     tags = {
         environment = "Terraform Demo"
@@ -28,7 +28,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
     name                 = "mySubnet"
-    resource_group_name  = azurerm_resource_group.myterraformgroup.name
+    resource_group_name  = azurerm_resource_group.terraform_workshop.name
     virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
     address_prefix       = "10.0.1.0/24"
 }
@@ -37,7 +37,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
     location                     = "westeurope"
-    resource_group_name          = azurerm_resource_group.myterraformgroup.name
+    resource_group_name          = azurerm_resource_group.terraform_workshop.name
     allocation_method            = "Dynamic"
 
     tags = {
@@ -49,7 +49,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 resource "azurerm_network_security_group" "myterraformnsg" {
     name                = "myNetworkSecurityGroup"
     location            = "westeurope"
-    resource_group_name = azurerm_resource_group.myterraformgroup.name
+    resource_group_name = azurerm_resource_group.terraform_workshop.name
     
     security_rule {
         name                       = "SSH"
@@ -63,6 +63,18 @@ resource "azurerm_network_security_group" "myterraformnsg" {
         destination_address_prefix = "*"
     }
 
+    security_rule {
+        name                       = "WEB_SSH"
+        priority                   = 3000
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "3000"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+    }
+
     tags = {
         environment = "Terraform Demo"
     }
@@ -72,7 +84,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 resource "azurerm_network_interface" "myterraformnic" {
     name                      = "myNIC"
     location                  = "westeurope"
-    resource_group_name       = azurerm_resource_group.myterraformgroup.name
+    resource_group_name       = azurerm_resource_group.terraform_workshop.name
 
     ip_configuration {
         name                          = "myNicConfiguration"
@@ -95,7 +107,7 @@ resource "azurerm_network_interface_security_group_association" "mynicsg" {
 resource "azurerm_virtual_machine" "myterraformvm" {
     name                  = "myVM"
     location              = "westeurope"
-    resource_group_name   = azurerm_resource_group.myterraformgroup.name
+    resource_group_name   = azurerm_resource_group.terraform_workshop.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     vm_size               = "Standard_DS1_v2"
 
@@ -116,7 +128,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     os_profile {
         computer_name  = "myvm"
         admin_username = "azureuser"
-        custom_data = "#!/usr/bin/env bash \n echo 'Hello world!' > /etc/motd"
+        custom_data = file("scripts/init.sh")
     }
 
     os_profile_linux_config {
