@@ -41,5 +41,6 @@ for i in {1..30}; do
     useradd -m -s /bin/bash "tfuser$i"
     echo "tfuser$i:tfpass$i" | chpasswd
     echo "\n export TF_VAR_user=\"tfuser$i\"" >> /home/tfuser$i/.bashrc
+    echo "\n export TF_VAR_resource_group=\"terraformWorkshop\"" >> /home/tfuser$i/.bashrc
     ssh-keygen -b 2048 -t rsa -f /home/tfuser$i/.ssh/id_rsa -q -N ""
 done

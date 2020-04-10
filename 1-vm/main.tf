@@ -3,22 +3,12 @@ provider "azurerm" {
     features {}
 }
 
-# Create a resource group if it doesn’t exist
-resource "azurerm_resource_group" "terraform_workshop" {
-    name     = "terraformWorkshop1${var.user}"
-    location = "westeurope"
-
-    tags = {
-        environment = "Terraform workshop"
-    }
-}
-
 # Create virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
     name                = "myVnet"
     address_space       = ["10.0.0.0/16"]
     location            = "westeurope"
-    resource_group_name = azurerm_resource_group.terraform_workshop.name
+    resource_group_name = var.resource_group
 
     tags = {
         environment = "Terraform Demo"
@@ -28,7 +18,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
     name                 = "mySubnet"
-    resource_group_name  = azurerm_resource_group.terraform_workshop.name
+    resource_group_name  = var.resource_group
     virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
     address_prefix       = "10.0.1.0/24"
 }
@@ -37,7 +27,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
     location                     = "westeurope"
-    resource_group_name          = azurerm_resource_group.terraform_workshop.name
+    resource_group_name          = var.resource_group
     allocation_method            = "Dynamic"
 
     tags = {
@@ -49,7 +39,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 resource "azurerm_network_security_group" "myterraformnsg" {
     name                = "myNetworkSecurityGroup"
     location            = "westeurope"
-    resource_group_name = azurerm_resource_group.terraform_workshop.name
+    resource_group_name = var.resource_group
     
     security_rule {
         name                       = "SSH"
@@ -72,7 +62,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 resource "azurerm_network_interface" "myterraformnic" {
     name                      = "myNIC"
     location                  = "westeurope"
-    resource_group_name       = azurerm_resource_group.terraform_workshop.name
+    resource_group_name       = var.resource_group
 
     ip_configuration {
         name                          = "myNicConfiguration"
@@ -95,7 +85,7 @@ resource "azurerm_network_interface_security_group_association" "mynicsg" {
 resource "azurerm_virtual_machine" "myterraformvm" {
     name                  = "myVM"
     location              = "westeurope"
-    resource_group_name   = azurerm_resource_group.terraform_workshop.name
+    resource_group_name   = var.resource_group
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     vm_size               = "Standard_DS1_v2"
 
