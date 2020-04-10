@@ -3,9 +3,6 @@ apt update
 apt upgrade -y
 apt install python3-pip unzip language-pack-nl -y
 
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-service sshd restart
-
 curl -sL https://deb.nodesource.com/setup_13.x | bash -
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
@@ -38,8 +35,11 @@ unzip /root/terraform.zip -d /root/
 mv /root/terraform /usr/local/bin/terraform
 wget https://github.com/yaron/tf-workshop/archive/master.zip -O /root/workshop.zip
 unzip /root/workshop.zip -d /etc/skel
+mkdir /etc/skel/.ssh
 
 for i in {1..30}; do
     useradd -m -s /bin/bash "tfuser$i"
     echo "tfuser$i:tfpass$i" | chpasswd
+    echo "\n export TF_VAR_user=\"tfuser$i\"" >> /home/tfuser$i/.bashrc
+    ssh-keygen -b 2048 -t rsa -f /home/tfuser$i/.ssh/id_rsa -q -N ""
 done

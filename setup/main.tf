@@ -132,7 +132,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     }
 
     os_profile_linux_config {
-        disable_password_authentication = true
+        disable_password_authentication = false
         ssh_keys {
             path     = "/home/azureuser/.ssh/authorized_keys"
             key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDT/A23+p1SxGcqD17zEA26eamBHfrAF3IBiZkVktbraThLRBStGAw2QUfGtISD0E2P39Br3sciI//DkTz0ClPPAsDzKDFRFHmYpzBRRS+WqpLxMXmWtFSqzjRMyvtecu9EAwdLldH/Qe6LiSg0PG8aY3LeZlGfmEbMt0peQOP5HFESZWh0yXcQHQPVju51EoWF5JlEBI+NmdDjH7ZzXjLJhPuKtiV4Ex15F1JxH9GnPoyY49oQjW0+PkbP+2dgfIQRclza0W0n+BLFAjHADBNd8bmjnaK+OMT3VgXiHIzk1wE+kPUTeBQYZrnWCcYNCPeMx0U9n3CsmhNh0Cbh+rQHFk0xpBLW7gaihLd+8OQpeU6GmIwwsWrJP2oGGFLH8V2GOHRpNNY7X0fZQA/exwVDQoJrxTYdcASwaOGo/syT84oh2UbeAtzPT7wrtQPeH6lMgadVPv4In8iRqmc6xbQiu6ZSTbptbCYuaCdmVoyJvAZtdnGWNrmog9NnI6gMksQhbWhg1GX/vECL3DIdg2Er945GO1p/QB/jqpFHIhHoMjG7qQ+0VrKAW1B4mx0SLYEHwSAoV+J77cuUy9lrSldLUgTwYPktHEaShisllAfy5z5QBbkU5aqsYSj7BV++BV2wYfDsU5ck8DVUJxN0lE8XTUHXE3YtjcHKyRW4ooCGLQ=="
