@@ -90,7 +90,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     vm_size               = "Standard_DS1_v2"
 
     storage_os_disk {
-        name              = "myOsDisk"
+        name              = "myOsDisk1${var.user}"
         caching           = "ReadWrite"
         create_option     = "FromImage"
         managed_disk_type = "Premium_LRS"
@@ -104,15 +104,15 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     }
 
     os_profile {
-        computer_name  = "myvm"
+        computer_name  = "terraform-vm-${var.user}"
         admin_username = var.user
     }
 
     os_profile_linux_config {
         disable_password_authentication = true
         ssh_keys {
-            path     = "/home/azureuser/.ssh/authorized_keys"
-            key_data = file("/home/${var.user}/.ssh/id_rsa")
+            path     = "/home/${var.user}/.ssh/authorized_keys"
+            key_data = file("/home/${var.user}/.ssh/id_rsa.pub")
         }
     }
 
