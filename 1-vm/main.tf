@@ -1,6 +1,7 @@
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
     features {}
+    skip_provider_registration = true
 }
 
 # Create virtual network
@@ -20,7 +21,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
     name                 = "subnet1${var.user}"
     resource_group_name  = var.resource_group
     virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
-    address_prefix       = "10.0.1.0/24"
+    address_prefixes     = ["10.0.1.0/24"]
 }
 
 # Create public IPs
