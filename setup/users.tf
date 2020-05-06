@@ -1,5 +1,5 @@
 resource "azuread_user" "workshop" {
-  count = 30
+  count = 32
   user_principal_name = "tfWorkshop${count.index}@harryfranzenkpn.onmicrosoft.com"
   display_name        = "tfWorkshop${count.index}"
   password            = "tfWorkshoppass${count.index}"

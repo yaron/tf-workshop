@@ -39,7 +39,7 @@ wget https://github.com/yaron/tf-workshop/archive/master.zip -O /root/workshop.z
 unzip /root/workshop.zip -d /etc/skel
 mkdir /etc/skel/.ssh
 
-for i in {1..30}; do
+for i in {0..31}; do
     useradd -m -s /bin/bash "tfuser$i"
     echo "tfuser$i:tfpass$i" | chpasswd
     echo "export TF_VAR_user=\"tfuser$i\"" >> /home/tfuser$i/.bashrc
