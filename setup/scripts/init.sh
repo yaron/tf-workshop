@@ -39,6 +39,9 @@ wget https://github.com/yaron/tf-workshop/archive/master.zip -O /root/workshop.z
 unzip /root/workshop.zip -d /etc/skel
 mkdir /etc/skel/.ssh
 
+# Enable the use of passwords to ssh login.
+sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+
 for i in {0..31}; do
     useradd -m -s /bin/bash "tfuser$i"
     echo "tfuser$i:tfpass$i" | chpasswd
