@@ -95,7 +95,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
     location              = "westeurope"
     resource_group_name   = azurerm_resource_group.terraform_workshop.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
-    vm_size               = "Standard_DS1_v2"
+    vm_size               = "Standard_DS4_v2"
     depends_on = [azuread_user.workshop]
 
     storage_os_disk {

@@ -41,6 +41,7 @@ mkdir /etc/skel/.ssh
 
 # Enable the use of passwords to ssh login.
 sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+service ssh restart
 
 for i in {0..31}; do
     useradd -m -s /bin/bash "tfuser$i"
