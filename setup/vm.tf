@@ -90,40 +90,32 @@ resource "azurerm_network_interface_security_group_association" "mynicsg" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "myterraformvm" {
+resource "azurerm_linux_virtual_machine" "myterraformvm" {
     name                  = "myVM"
     location              = "westeurope"
     resource_group_name   = azurerm_resource_group.terraform_workshop.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
-    vm_size               = "Standard_DS4_v2"
-    depends_on = [azuread_user.workshop]
+    size                  = "Standard_DS4_v2"
+    depends_on            = [azuread_user.workshop]
+    admin_username        = "azureuser"
 
-    storage_os_disk {
-        name              = "myOsDisk"
-        caching           = "ReadWrite"
-        create_option     = "FromImage"
-        managed_disk_type = "Premium_LRS"
+    os_disk  {
+        caching              = "ReadWrite"
+        storage_account_type = "Standard_LRS"
     }
 
-    storage_image_reference {
+    source_image_reference {
         publisher = "Canonical"
         offer     = "UbuntuServer"
         sku       = "18.04-LTS"
         version   = "latest"
     }
 
-    os_profile {
-        computer_name  = "myvm"
-        admin_username = "azureuser"
-        custom_data = file("scripts/init.sh")
-    }
+    custom_data = base64encode(file("scripts/init.sh"))
 
-    os_profile_linux_config {
-        disable_password_authentication = true
-        ssh_keys {
-            path     = "/home/azureuser/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDT/A23+p1SxGcqD17zEA26eamBHfrAF3IBiZkVktbraThLRBStGAw2QUfGtISD0E2P39Br3sciI//DkTz0ClPPAsDzKDFRFHmYpzBRRS+WqpLxMXmWtFSqzjRMyvtecu9EAwdLldH/Qe6LiSg0PG8aY3LeZlGfmEbMt0peQOP5HFESZWh0yXcQHQPVju51EoWF5JlEBI+NmdDjH7ZzXjLJhPuKtiV4Ex15F1JxH9GnPoyY49oQjW0+PkbP+2dgfIQRclza0W0n+BLFAjHADBNd8bmjnaK+OMT3VgXiHIzk1wE+kPUTeBQYZrnWCcYNCPeMx0U9n3CsmhNh0Cbh+rQHFk0xpBLW7gaihLd+8OQpeU6GmIwwsWrJP2oGGFLH8V2GOHRpNNY7X0fZQA/exwVDQoJrxTYdcASwaOGo/syT84oh2UbeAtzPT7wrtQPeH6lMgadVPv4In8iRqmc6xbQiu6ZSTbptbCYuaCdmVoyJvAZtdnGWNrmog9NnI6gMksQhbWhg1GX/vECL3DIdg2Er945GO1p/QB/jqpFHIhHoMjG7qQ+0VrKAW1B4mx0SLYEHwSAoV+J77cuUy9lrSldLUgTwYPktHEaShisllAfy5z5QBbkU5aqsYSj7BV++BV2wYfDsU5ck8DVUJxN0lE8XTUHXE3YtjcHKyRW4ooCGLQ=="
-        }
+    admin_ssh_key {
+        username   = "azureuser"
+        public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDT/A23+p1SxGcqD17zEA26eamBHfrAF3IBiZkVktbraThLRBStGAw2QUfGtISD0E2P39Br3sciI//DkTz0ClPPAsDzKDFRFHmYpzBRRS+WqpLxMXmWtFSqzjRMyvtecu9EAwdLldH/Qe6LiSg0PG8aY3LeZlGfmEbMt0peQOP5HFESZWh0yXcQHQPVju51EoWF5JlEBI+NmdDjH7ZzXjLJhPuKtiV4Ex15F1JxH9GnPoyY49oQjW0+PkbP+2dgfIQRclza0W0n+BLFAjHADBNd8bmjnaK+OMT3VgXiHIzk1wE+kPUTeBQYZrnWCcYNCPeMx0U9n3CsmhNh0Cbh+rQHFk0xpBLW7gaihLd+8OQpeU6GmIwwsWrJP2oGGFLH8V2GOHRpNNY7X0fZQA/exwVDQoJrxTYdcASwaOGo/syT84oh2UbeAtzPT7wrtQPeH6lMgadVPv4In8iRqmc6xbQiu6ZSTbptbCYuaCdmVoyJvAZtdnGWNrmog9NnI6gMksQhbWhg1GX/vECL3DIdg2Er945GO1p/QB/jqpFHIhHoMjG7qQ+0VrKAW1B4mx0SLYEHwSAoV+J77cuUy9lrSldLUgTwYPktHEaShisllAfy5z5QBbkU5aqsYSj7BV++BV2wYfDsU5ck8DVUJxN0lE8XTUHXE3YtjcHKyRW4ooCGLQ=="
     }
 
     tags = {

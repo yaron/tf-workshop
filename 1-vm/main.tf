@@ -83,38 +83,32 @@ resource "azurerm_network_interface_security_group_association" "mynicsg" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "myterraformvm" {
+resource "azurerm_linux_virtual_machine" "myterraformvm" {
     name                  = "VM1${var.user}"
     location              = "westeurope"
     resource_group_name   = var.resource_group
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
-    vm_size               = "Standard_DS1_v2"
+    size                  = "Standard_DS1_v2"
+    depends_on            = [azuread_user.workshop]
+    admin_username        = var.user
 
-    storage_os_disk {
-        name              = "myOsDisk1${var.user}"
-        caching           = "ReadWrite"
-        create_option     = "FromImage"
-        managed_disk_type = "Premium_LRS"
+    os_disk  {
+        caching              = "ReadWrite"
+        storage_account_type = "Standard_LRS"
     }
 
-    storage_image_reference {
+    source_image_reference {
         publisher = "Canonical"
         offer     = "UbuntuServer"
         sku       = "18.04-LTS"
         version   = "latest"
     }
 
-    os_profile {
-        computer_name  = "terraform-vm-${var.user}"
-        admin_username = var.user
-    }
+    custom_data = base64encode(file("scripts/init.sh"))
 
-    os_profile_linux_config {
-        disable_password_authentication = true
-        ssh_keys {
-            path     = "/home/${var.user}/.ssh/authorized_keys"
-            key_data = file("/home/${var.user}/.ssh/id_rsa.pub")
-        }
+    admin_ssh_key {
+        username   = var.user
+        public_key = file("/home/${var.user}/.ssh/id_rsa.pub")
     }
 
     tags = {

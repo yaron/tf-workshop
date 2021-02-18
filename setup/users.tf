@@ -6,7 +6,7 @@ resource "azuread_user" "workshop" {
 }
 resource "azuread_group" "workshop" {
   name    = "TerraformWorkshop"
-  members = azuread_user.workshop[*].object_id
+  members = azuread_user.workshop.*.object_id
 }
 
 data "azurerm_subscription" "primary" {
