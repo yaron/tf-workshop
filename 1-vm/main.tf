@@ -89,7 +89,6 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     resource_group_name   = var.resource_group
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     size                  = "Standard_DS1_v2"
-    depends_on            = [azuread_user.workshop]
     admin_username        = var.user
 
     os_disk  {
@@ -103,8 +102,6 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
         sku       = "18.04-LTS"
         version   = "latest"
     }
-
-    custom_data = base64encode(file("scripts/init.sh"))
 
     admin_ssh_key {
         username   = var.user
